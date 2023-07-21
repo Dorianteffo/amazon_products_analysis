@@ -1,12 +1,5 @@
 # Amazon products analysis 
 In this project, we analyzed the KPIs of the TOP Amazon manufacturers. 
-We found : 
-* Distribution of ratings
-* Distribution of the number of reviews
-* Distribution of discount percentage
-* Manufacturers with the highest number of outliers in terms of price
-* Top categories
-* Top subcategories.
-
 The notebook file amazon_product_analysis.ipynb contains more details about the project and the entire analysis. 
+(warning : the two plots made with the plotly library(distribution of price and distribution of number of reviews) are missing from the notebook,  you can check those in the same notebook on my Kaggle  https://www.kaggle.com/code/doriancurtis/amazon-products-analysis/notebook)
   
