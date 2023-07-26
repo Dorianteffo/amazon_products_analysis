@@ -3,16 +3,12 @@ import streamlit as st
 import plotly.express as px
 import numpy as np 
 
-st.set_page_config(page_title= "Amazon product",
-                    page_icon="📊",
+st.set_page_config(page_title= "Amazon_product",
+                    page_icon="🏷",
                     layout="wide")
 
 
-
-#title
-st.write('# 📊Amazon products analysis')
-st.write('## ')
-
+#data cleaning 
 df = pd.read_csv('Amazon-Products.csv')
 def cleaning_data(df) : 
 
@@ -53,21 +49,27 @@ def cleaning_data(df) :
 df = cleaning_data(df)
 
 
+#title
+st.title('📊Dashboard')
+st.markdown('##')
+
 
 #sidebar 
-st.sidebar.write('# Filter')
+st.sidebar.write('# `FILTERS`')
+st.sidebar.write('## Dashboard parameter')
 manufactur = st.sidebar.selectbox("Select a manufacturer:", 
-                                    options = df['manufacturer'].unique()
+                                    options = df.groupby('manufacturer',as_index=False)['discount_price'].sum().sort_values('discount_price',ascending=False).manufacturer
                                     )
-
-
-
-st.sidebar.write('You selected:', manufactur)
 
 df_selection = df.query(
     " manufacturer == @manufactur"
 )
 
+#the subcategory parameter
+st.sidebar.write('## Subcategory parameter')
+subcategory_parameter = st.sidebar.selectbox('Select a category:',
+                                             options = df_selection['main_category'].unique()
+                                             )
 
 total_revenue = round(df_selection['discount_price'].sum(),0)
 avg_ratings = round(df_selection['ratings'].mean(),1)
@@ -88,6 +90,7 @@ with col3 :
 
 st.markdown('---')
 
+# barchart category sales
 sales_by_category = df_selection.groupby('main_category',as_index=False)['discount_price'].sum()
 fig_category_sales = px.bar(
     sales_by_category, x='main_category',
@@ -98,17 +101,42 @@ fig_category_sales.update_layout(title = "Sales by category",
                                  xaxis_title = "Category",
                                  yaxis_title = "Sales (US $)")
 
-st.plotly_chart(fig_category_sales)
 
+
+# barchart subcategory sales 
+sales_by_subcategory = df.groupby(['main_category','sub_category'],as_index=False)['discount_price'].sum()
+fig_subcategory_sales = px.bar(     sales_by_subcategory[sales_by_subcategory['main_category']==subcategory_parameter], 
+                                    x='discount_price',
+                                    y='sub_category',
+                                    orientation = "h", 
+                                    template='simple_white'
+                                )
+fig_subcategory_sales.update_layout(title = "Top subcategory",
+                                 xaxis_title = "Sales (US $)",
+                                 yaxis_title = "Subcategory"
+                                 )
+
+
+
+left, right = st.columns(2)
+left.plotly_chart(fig_category_sales)
+right.plotly_chart(fig_subcategory_sales)
+
+
+st.markdown('##')
+
+#the scatterplot
 fig_discount_reviews = px.scatter(df_selection, 
                                   x="discount_percentage", 
                                   y="no_of_ratings", 
                                   trendline="ols", 
                                    template="simple_white"
                                    )
-fig_discount_reviews.update_yaxes(range=[0, 8000])
+fig_discount_reviews.update_yaxes(range=[0,8000])
 fig_discount_reviews.update_layout(title = "Relationship between the number of reviews and discount percent",
                  yaxis_title = "Number of reviews",
                  xaxis_title = "Discount percentage")
 
 st.plotly_chart(fig_discount_reviews)
+
+
