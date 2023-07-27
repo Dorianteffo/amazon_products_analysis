@@ -5,7 +5,8 @@ import numpy as np
 
 st.set_page_config(page_title= "Amazon_product",
                     page_icon="🏷",
-                    layout="wide")
+                    layout="wide"
+                    )
 
 
 #data cleaning 
