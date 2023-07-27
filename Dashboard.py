@@ -58,7 +58,7 @@ st.markdown('##')
 st.sidebar.write('# `FILTERS`')
 st.sidebar.write('## Dashboard parameter')
 manufactur = st.sidebar.selectbox("Select a manufacturer:", 
-                                    options = df.groupby('manufacturer',as_index=False)['discount_price'].sum().sort_values('discount_price',ascending=False).manufacturer
+                                    options = df['manufacturer'].value_counts().index
                                     )
 
 df_selection = df.query(
@@ -118,25 +118,41 @@ fig_subcategory_sales.update_layout(title = "Top subcategory",
 
 
 
-left, right = st.columns(2)
-left.plotly_chart(fig_category_sales)
-right.plotly_chart(fig_subcategory_sales)
+left1, right1= st.columns(2)
+left1.plotly_chart(fig_category_sales)
+right1.plotly_chart(fig_subcategory_sales)
 
 
-st.markdown('##')
+st.markdown('#')
 
-#the scatterplot
-fig_discount_reviews = px.scatter(df_selection, 
-                                  x="discount_percentage", 
-                                  y="no_of_ratings", 
-                                  trendline="ols", 
-                                   template="simple_white"
-                                   )
-fig_discount_reviews.update_yaxes(range=[0,8000])
-fig_discount_reviews.update_layout(title = "Relationship between the number of reviews and discount percent",
-                 yaxis_title = "Number of reviews",
-                 xaxis_title = "Discount percentage")
 
-st.plotly_chart(fig_discount_reviews)
+#distribution of price 
+fig_distribution_price = px.box(df_selection, 
+                                x='discount_price', 
+                                template='simple_white',
+                                hover_data = ['main_category']
+                                )
+fig_distribution_price.update_layout(title = 'Distribution of price', 
+                                     xaxis_title='Discount price'
+                                     )
+
+
+
+
+#distribution of reviews
+fig_distribution_reviews = px.histogram(df_selection,
+                                        x='no_of_ratings',
+                                        template = 'simple_white'
+                                        )
+fig_distribution_reviews.update_layout(title="Distribution of the number of reviews",
+                                       xaxis_title = "Number of reviews")
+
+
+
+left2, right2= st.columns(2)
+left2.plotly_chart(fig_distribution_price)
+right2.plotly_chart(fig_distribution_reviews)
+
+
 
 
