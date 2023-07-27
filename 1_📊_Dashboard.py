@@ -56,7 +56,7 @@ st.markdown('##')
 
 
 #sidebar 
-st.sidebar.write('# `FILTERS`')
+st.sidebar.write('# 🧬Filters')
 st.sidebar.write('## Dashboard parameter')
 manufactur = st.sidebar.selectbox("Select a manufacturer:", 
                                     options = df['manufacturer'].value_counts().index
