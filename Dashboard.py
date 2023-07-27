@@ -99,7 +99,9 @@ fig_category_sales = px.bar(
       )
 fig_category_sales.update_layout(title = "Sales by category",
                                  xaxis_title = "Category",
-                                 yaxis_title = "Sales (US $)")
+                                 yaxis_title = "Sales (US $)",
+                                 plot_bgcolor="rgba(0,0,0,0)"
+                                 )
 
 
 
@@ -113,7 +115,8 @@ fig_subcategory_sales = px.bar(     sales_by_subcategory[sales_by_subcategory['m
                                 )
 fig_subcategory_sales.update_layout(title = "Top subcategory",
                                  xaxis_title = "Sales (US $)",
-                                 yaxis_title = "Subcategory"
+                                 yaxis_title = "Subcategory",
+                                 plot_bgcolor="rgba(0,0,0,0)"
                                  )
 
 
@@ -133,7 +136,8 @@ fig_distribution_price = px.box(df_selection,
                                 hover_data = ['main_category']
                                 )
 fig_distribution_price.update_layout(title = 'Distribution of price', 
-                                     xaxis_title='Discount price'
+                                     xaxis_title='Discount price',
+                                     plot_bgcolor="rgba(0,0,0,0)"
                                      )
 
 
@@ -145,7 +149,8 @@ fig_distribution_reviews = px.histogram(df_selection,
                                         template = 'simple_white'
                                         )
 fig_distribution_reviews.update_layout(title="Distribution of the number of reviews",
-                                       xaxis_title = "Number of reviews")
+                                       xaxis_title = "Number of reviews",
+                                       plot_bgcolor="rgba(0,0,0,0)")
 
 
 
