@@ -1,7 +1,9 @@
+#import libraries
 import pandas as pd 
 import streamlit as st 
 import plotly.express as px
 import numpy as np 
+import module.cleaning as cl
 
 st.set_page_config(page_title= "Amazon_product",
                     page_icon="🏷",
@@ -11,43 +13,7 @@ st.set_page_config(page_title= "Amazon_product",
 
 #data cleaning 
 df = pd.read_csv('Amazon-Products.csv')
-def cleaning_data(df) : 
-
-    df.dropna(inplace=True)#drop row with Nan value
-    df.drop('Unnamed: 0',axis=1, inplace=True)
-
-
-    dirty_value = ['Get', 'FREE', '₹68.99', '₹65', '₹70','₹100','₹99', '₹2.99']
-    df['ratings'] = df['ratings'].replace(dirty_value, '0')
-    df['ratings'] = df['ratings'].astype('float')
-
-    df['no_of_ratings'] = df['no_of_ratings'].replace(',','', regex = True)
-    df['no_of_ratings'] = pd.to_numeric(df['no_of_ratings'], errors='coerce').fillna('0')
-    df['no_of_ratings'] = df['no_of_ratings'].astype('float')
-
- 
-    df.loc[df['discount_price'].str.contains('₹')==True, 'discount_price'] = df.loc[df['discount_price'].str.contains('₹')==True, 'discount_price'].apply(lambda x:x.strip('₹'))
-    df.loc[df['discount_price'].str.contains(',')==True,'discount_price'] = df.loc[df['discount_price'].str.contains(',')==True,'discount_price'].apply(lambda x:x.replace(',',''))
-    df['discount_price'] = df['discount_price'].astype('float')
-
-
-    df.loc[df['actual_price'].str.contains('₹')==True, 'actual_price'] = df.loc[df['actual_price'].str.contains('₹')==True, 'actual_price'].apply(lambda x:x.strip('₹'))
-    df.loc[df['actual_price'].str.contains(',')==True,'actual_price'] = df.loc[df['actual_price'].str.contains(',')==True,'actual_price'].apply(lambda x:x.replace(',',''))
-    df['actual_price'] = df['actual_price'].astype('float')
-
-    df['discount_price'] = df['discount_price']*0.012
-    df['actual_price'] = df['actual_price']*0.012
-
-    df.insert(1, 'manufacturer', df['name'].apply(lambda x:x.split(' ')[0]))
-
-    df['discount_percentage'] = np.where(df['actual_price']!=0,round((df['actual_price']-df['discount_price'])/df['actual_price'],2),0)
-
-    top10_manufacturer= df.groupby('manufacturer',as_index=False).size().sort_values('size',ascending=False).iloc[:10]['manufacturer'].to_list() 
-    df = df[df['manufacturer'].isin(top10_manufacturer)]
-
-    return df
-
-df = cleaning_data(df)
+df = cl.cleaning_data(df)
 
 
 #title
@@ -57,6 +23,8 @@ st.markdown('##')
 
 #sidebar 
 st.sidebar.write('# 🧬Filters')
+
+#dashboard parameter
 st.sidebar.write('## Dashboard parameter')
 manufactur = st.sidebar.selectbox("Select a manufacturer:", 
                                     options = df['manufacturer'].value_counts().index
@@ -66,12 +34,14 @@ df_selection = df.query(
     " manufacturer == @manufactur"
 )
 
-#the subcategory parameter
+#subcategory parameter
 st.sidebar.write('## Subcategory parameter')
 subcategory_parameter = st.sidebar.selectbox('Select a category:',
                                              options = df_selection['main_category'].unique()
                                              )
 
+
+#KPIs
 total_revenue = round(df_selection['discount_price'].sum(),0)
 avg_ratings = round(df_selection['ratings'].mean(),1)
 star_rating = '⭐'* int(round(avg_ratings,0))
@@ -91,7 +61,7 @@ with col3 :
 
 st.markdown('---')
 
-# barchart category sales
+# bar chart category sales
 sales_by_category = df_selection.groupby('main_category',as_index=False)['discount_price'].sum()
 fig_category_sales = px.bar(
     sales_by_category, x='main_category',
@@ -106,7 +76,7 @@ fig_category_sales.update_layout(title = "Sales by category",
 
 
 
-# barchart subcategory sales 
+# bar chart subcategory sales 
 sales_by_subcategory = df.groupby(['main_category','sub_category'],as_index=False)['discount_price'].sum()
 fig_subcategory_sales = px.bar(     sales_by_subcategory[sales_by_subcategory['main_category']==subcategory_parameter], 
                                     x='discount_price',

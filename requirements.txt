@@ -4,4 +4,3 @@ plotly==5.9.0
 streamlit==1.25.0
 protobuf
 altair
-htbuilder 
