@@ -17,16 +17,9 @@ st.markdown("""
 st.markdown('##')
 st.markdown('### 🔎Methodology')
 st.markdown(f"""
-            This app uses a dataset from [kaggle](https://www.kaggle.com/datasets/lokeshparab/amazon-products-dataset) (updated 4 months ago).
-            Since I don't have any skills in web scraping and data pipeline implementation yet, I couldn't build this app with real-time data. That's why I used the latest Amazon product data set available on Kaggle. 
+            This app uses a dataset from [kaggle](https://www.kaggle.com/datasets/lokeshparab/amazon-products-dataset). And I used the streamlit library top build this entire webapp. 
             """)
 
-
-st.markdown('##')
-st.markdown("### ❓What's next")
-st.markdown("""
-            I will definitely go further with this project using real time data in the next months.
-            """)
 
 
 st.markdown('##')
